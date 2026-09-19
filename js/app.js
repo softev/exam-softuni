@@ -31,7 +31,24 @@
     kpis: document.querySelectorAll('.kpi'),
     rates: document.getElementById('rates-panel'),
     leadRate: document.getElementById('lead-rate'),
-    prospectRate: document.getElementById('prospect-rate')
+    prospectRate: document.getElementById('prospect-rate'),
+    chart: document.getElementById('chart'),
+    chartSvg: document.getElementById('chart-svg'),
+    tooltip: document.getElementById('chart-tooltip')
+  };
+
+  /** Latest month-by-month figures, kept so the tooltip can read them back. */
+  var schedule = [];
+
+  /** Captions the chart draws on its axes. */
+  var chartLabels = { months: 'Months', people: 'people' };
+
+  /** Captions the tooltip uses for each funnel stage. */
+  var tooltipLabels = {
+    month: 'Month',
+    prospects: 'Prospects',
+    leads: 'Leads',
+    customers: 'Customers'
   };
 
   /**
@@ -165,6 +182,37 @@
     }
   }
 
+  /**
+   * Fills the tooltip for a month and parks it next to the pointer.
+   * @param {number} index Row the pointer is over.
+   * @param {MouseEvent} event
+   */
+  function showTooltip(index, event) {
+    var point = schedule[index];
+
+    if (!point) {
+      return;
+    }
+
+    els.tooltip.innerHTML =
+      '<strong>' + tooltipLabels.month + ' #' + point.month + '</strong>' +
+      '<span>' + tooltipLabels.prospects + ': ' + point.prospects + '</span>' +
+      '<span>' + tooltipLabels.leads + ': ' + point.leads + '</span>' +
+      '<span>' + tooltipLabels.customers + ': ' + point.customers + '</span>';
+
+    var bounds = els.chart.getBoundingClientRect();
+    var left = event.clientX - bounds.left;
+    var margin = 75;
+
+    els.tooltip.hidden = false;
+    els.tooltip.style.left = Math.min(Math.max(left, margin), bounds.width - margin) + 'px';
+    els.tooltip.style.top = (event.clientY - bounds.top) + 'px';
+  }
+
+  function hideTooltip() {
+    els.tooltip.hidden = true;
+  }
+
   /** Recomputes everything that depends on the campaign inputs. */
   function render() {
     applyCurrencySymbol();
@@ -184,6 +232,15 @@
     });
 
     renderKpis(funnel);
+
+    var months = FunnelCalculator.monthsBetween(campaign.startDate, campaign.endDate);
+    schedule = FunnelCalculator.buildSchedule(funnel, months);
+
+    FunnelChart.render({
+      svg: els.chartSvg,
+      schedule: schedule,
+      labels: chartLabels
+    });
   }
 
   function init() {
@@ -191,6 +248,18 @@
     els.form.addEventListener('input', render);
     els.form.addEventListener('change', render);
     els.rates.addEventListener('input', render);
+
+    els.chartSvg.addEventListener('mousemove', function (event) {
+      var hit = event.target.closest('.chart__hit');
+
+      if (hit) {
+        showTooltip(Number(hit.dataset.index), event);
+      } else {
+        hideTooltip();
+      }
+    });
+
+    els.chartSvg.addEventListener('mouseleave', hideTooltip);
     els.form.addEventListener('submit', function (event) {
       event.preventDefault();
     });
