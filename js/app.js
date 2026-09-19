@@ -209,7 +209,10 @@
 
     var bounds = els.chart.getBoundingClientRect();
     var left = event.clientX - bounds.left;
-    var margin = 75;
+
+    // Keep the tooltip inside the panel, but never let the clamp invert on a
+    // panel too narrow to hold it - there the tooltip simply centres.
+    var margin = Math.min(75, bounds.width / 2);
 
     els.tooltip.hidden = false;
     els.tooltip.style.left = Math.min(Math.max(left, margin), bounds.width - margin) + 'px';
