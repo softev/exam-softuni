@@ -5,11 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LeadPredictor</title>
   <meta name="description" content="Sales funnel calculator: turn a revenue target into the prospects, leads and customers a campaign needs." />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  <main class="app">
-    <h1>LeadPredictor</h1>
-  </main>
+  <div class="app">
+
+    <aside class="sidebar">
+      <div class="brand">
+        <svg class="brand__mark" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 4h18l-7 8v7l-4 2v-9L3 4z" />
+        </svg>
+        <span class="brand__name">Lead<strong>Predictor</strong></span>
+      </div>
+      <form class="controls" id="controls" autocomplete="off"></form>
+    </aside>
+
+    <section class="workspace">
+      <div class="workspace__top">
+        <div class="panel chart-panel" id="chart-panel"></div>
+        <div class="kpi-column" id="kpi-column"></div>
+      </div>
+      <div class="panel rates-panel" id="rates-panel"></div>
+    </section>
+
+  </div>
 </body>
 </html>
