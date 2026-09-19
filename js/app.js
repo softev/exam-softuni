@@ -19,6 +19,10 @@
   /** Months a campaign covers when no end date has been picked yet. */
   var DEFAULT_CAMPAIGN_MONTHS = 6;
 
+  /** Response rates until the sliders take over. Percentages, 0-100. */
+  var DEFAULT_LEAD_RATE = 40;
+  var DEFAULT_PROSPECT_RATE = 20;
+
   var els = {
     form: document.getElementById('controls'),
     language: document.getElementById('language'),
@@ -27,7 +31,8 @@
     endDate: document.getElementById('end-date'),
     revenue: document.getElementById('revenue'),
     orderValue: document.getElementById('order-value'),
-    error: document.getElementById('controls-error')
+    error: document.getElementById('controls-error'),
+    kpis: document.querySelectorAll('.kpi')
   };
 
   /**
@@ -112,10 +117,45 @@
     els.error.hidden = true;
   }
 
+  /**
+   * Writes one funnel stage into its KPI card.
+   * @param {Element} card
+   * @param {number} value People at this stage.
+   * @param {number} prospects People at the top of the funnel.
+   */
+  function renderKpi(card, value, prospects) {
+    var share = FunnelCalculator.shareOfFunnel(value, prospects);
+
+    card.querySelector('[data-kpi-value]').textContent = String(value);
+    card.querySelector('[data-kpi-share]').textContent = Math.round(share) + '%';
+    card.querySelector('[data-kpi-bar]').style.width = share + '%';
+  }
+
+  /** Fills all three KPI cards from a calculated funnel. */
+  function renderKpis(funnel) {
+    for (var i = 0; i < els.kpis.length; i++) {
+      var card = els.kpis[i];
+      renderKpi(card, funnel[card.dataset.kpi], funnel.prospects);
+    }
+  }
+
   /** Recomputes everything that depends on the campaign inputs. */
   function render() {
     applyCurrencySymbol();
-    readCampaign();
+
+    var campaign = readCampaign();
+    if (!campaign) {
+      return;
+    }
+
+    var funnel = FunnelCalculator.calculate({
+      revenue: campaign.revenue,
+      orderValue: campaign.orderValue,
+      leadRate: DEFAULT_LEAD_RATE,
+      prospectRate: DEFAULT_PROSPECT_RATE
+    });
+
+    renderKpis(funnel);
   }
 
   function init() {

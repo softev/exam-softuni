@@ -16,6 +16,11 @@
   --muted: #8fa0bb;
   --brand: #3d8bd4;
 
+  /* Funnel stage colours, shared by the chart and the KPI cards. */
+  --stage-prospects: #64789a;
+  --stage-leads: #9db1cd;
+  --stage-customers: #dde5f1;
+
   --radius-lg: 14px;
   --radius-md: 10px;
   --radius-sm: 8px;
@@ -246,4 +251,80 @@ body {
   font-size: 11.5px;
   line-height: 1.35;
   color: #e88b7a;
+}
+
+/* ==========================================================================
+   KPI cards
+   ========================================================================== */
+
+.kpi {
+  padding: 13px 14px 15px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+}
+
+.kpi__head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 4px;
+}
+
+.kpi__icon {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  fill: var(--muted);
+}
+
+.kpi__name {
+  font-size: 12.5px;
+  color: #c3cfe1;
+}
+
+.kpi__share {
+  margin-left: auto;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+.kpi__value {
+  margin: 0 0 10px;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.kpi__bar {
+  height: 4px;
+  overflow: hidden;
+  background: #16203200;
+  background-color: rgba(255, 255, 255, 0.09);
+  border-radius: 999px;
+}
+
+.kpi__bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #d7e1ef;
+  transition: width 0.25s ease;
+}
+
+/* Each funnel stage keeps the colour it has in the chart. */
+
+.kpi[data-kpi="prospects"] .kpi__bar-fill {
+  background: var(--stage-prospects, #64789a);
+}
+
+.kpi[data-kpi="leads"] .kpi__bar-fill {
+  background: var(--stage-leads, #9db1cd);
+}
+
+.kpi[data-kpi="customers"] .kpi__bar-fill {
+  background: var(--stage-customers, #dde5f1);
 }
