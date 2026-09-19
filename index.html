@@ -34,10 +34,10 @@
         <label class="field">
           <span class="field__label" data-i18n="currency">Currency</span>
           <select class="field__input field__input--select" id="currency" name="currency">
-            <option value="USD">$ US Dollar</option>
-            <option value="EUR">&euro; Euro</option>
-            <option value="GBP">&pound; British Pound</option>
-            <option value="BGN">лв. Bulgarian Lev</option>
+            <option value="USD" data-currency="USD">$ US Dollar</option>
+            <option value="EUR" data-currency="EUR">&euro; Euro</option>
+            <option value="GBP" data-currency="GBP">&pound; British Pound</option>
+            <option value="BGN" data-currency="BGN">лв. Bulgarian Lev</option>
           </select>
         </label>
 
@@ -136,6 +136,7 @@
 
   </div>
 
+  <script src="js/i18n.js" defer></script>
   <script src="js/calculator.js" defer></script>
   <script src="js/chart.js" defer></script>
   <script src="js/app.js" defer></script>

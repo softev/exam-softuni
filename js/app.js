@@ -8,14 +8,6 @@
 (function () {
   'use strict';
 
-  /** Currency symbol shown inside the money fields. */
-  var CURRENCY_SYMBOLS = {
-    USD: '$',
-    EUR: '\u20AC',
-    GBP: '\u00A3',
-    BGN: '\u043B\u0432.'
-  };
-
   /** Months a campaign covers when no end date has been picked yet. */
   var DEFAULT_CAMPAIGN_MONTHS = 6;
 
@@ -40,16 +32,10 @@
   /** Latest month-by-month figures, kept so the tooltip can read them back. */
   var schedule = [];
 
-  /** Captions the chart draws on its axes. */
-  var chartLabels = { months: 'Months', people: 'people' };
-
-  /** Captions the tooltip uses for each funnel stage. */
-  var tooltipLabels = {
-    month: 'Month',
-    prospects: 'Prospects',
-    leads: 'Leads',
-    customers: 'Customers'
-  };
+  /** Captions the chart draws on its axes, in the active language. */
+  function chartLabels() {
+    return { months: I18n.t('months'), people: I18n.t('people') };
+  }
 
   /**
    * Formats a Date as the `yyyy-mm-dd` string an `<input type="date">` expects.
@@ -83,11 +69,27 @@
 
   /** Mirrors the selected currency into every money field. */
   function applyCurrencySymbol() {
-    var symbol = CURRENCY_SYMBOLS[els.currency.value] || '$';
+    var symbol = I18n.currencySymbol(els.currency.value);
     var targets = document.querySelectorAll('[data-currency-symbol]');
 
     for (var i = 0; i < targets.length; i++) {
       targets[i].textContent = symbol;
+    }
+  }
+
+  /**
+   * Re-translates the interface and relabels the currency options, which
+   * carry a symbol as well as a name and so cannot use data-i18n directly.
+   */
+  function applyLanguage() {
+    I18n.setLanguage(els.language.value);
+    I18n.apply();
+
+    var options = els.currency.querySelectorAll('[data-currency]');
+
+    for (var i = 0; i < options.length; i++) {
+      var code = options[i].dataset.currency;
+      options[i].textContent = I18n.currencySymbol(code) + ' ' + I18n.t(code.toLowerCase());
     }
   }
 
@@ -103,27 +105,32 @@
     var orderValue = Number(els.orderValue.value);
 
     if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-      return fail('Please pick both a start and an end date.');
+      return fail('errDates');
     }
 
     if (end <= start) {
-      return fail('The campaign end date must come after the start date.');
+      return fail('errOrder');
     }
 
     if (!(revenue > 0)) {
-      return fail('Total revenue must be greater than zero.');
+      return fail('errRevenue');
     }
 
     if (!(orderValue > 0)) {
-      return fail('Average order value must be greater than zero.');
+      return fail('errOrderValue');
     }
 
     clearError();
     return { startDate: start, endDate: end, revenue: revenue, orderValue: orderValue };
   }
 
-  function fail(message) {
-    els.error.textContent = message;
+  /**
+   * Shows a translated validation message and stops the render.
+   * @param {string} key Translation key of the message.
+   * @returns {null}
+   */
+  function fail(key) {
+    els.error.textContent = I18n.t(key);
     els.error.hidden = false;
     return null;
   }
@@ -169,7 +176,7 @@
   function renderKpi(card, value, prospects) {
     var share = FunnelCalculator.shareOfFunnel(value, prospects);
 
-    card.querySelector('[data-kpi-value]').textContent = String(value);
+    card.querySelector('[data-kpi-value]').textContent = I18n.formatNumber(value);
     card.querySelector('[data-kpi-share]').textContent = Math.round(share) + '%';
     card.querySelector('[data-kpi-bar]').style.width = share + '%';
   }
@@ -195,10 +202,10 @@
     }
 
     els.tooltip.innerHTML =
-      '<strong>' + tooltipLabels.month + ' #' + point.month + '</strong>' +
-      '<span>' + tooltipLabels.prospects + ': ' + point.prospects + '</span>' +
-      '<span>' + tooltipLabels.leads + ': ' + point.leads + '</span>' +
-      '<span>' + tooltipLabels.customers + ': ' + point.customers + '</span>';
+      '<strong>' + I18n.t('month') + ' #' + point.month + '</strong>' +
+      '<span>' + I18n.t('prospects') + ': ' + I18n.formatNumber(point.prospects) + '</span>' +
+      '<span>' + I18n.t('leads') + ': ' + I18n.formatNumber(point.leads) + '</span>' +
+      '<span>' + I18n.t('customers') + ': ' + I18n.formatNumber(point.customers) + '</span>';
 
     var bounds = els.chart.getBoundingClientRect();
     var left = event.clientX - bounds.left;
@@ -215,6 +222,7 @@
 
   /** Recomputes everything that depends on the campaign inputs. */
   function render() {
+    applyLanguage();
     applyCurrencySymbol();
 
     var campaign = readCampaign();
@@ -239,7 +247,7 @@
     FunnelChart.render({
       svg: els.chartSvg,
       schedule: schedule,
-      labels: chartLabels
+      labels: chartLabels()
     });
   }
 
