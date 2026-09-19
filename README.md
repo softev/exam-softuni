@@ -7,7 +7,7 @@ spreads that work across the months between the start and end dates.
 
 > Exam project for the SoftUni course *Programming Fundamentals with AI*.
 
-**Live:** https://REPLACE-ME.netlify.app
+**Live:** https://leadpredictor-softev.netlify.app
 
 ## What it does
 
