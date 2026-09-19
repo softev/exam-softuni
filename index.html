@@ -113,7 +113,20 @@
         </article>
       </div>
       </div>
-      <div class="panel rates-panel" id="rates-panel"></div>
+      <div class="panel rates-panel" id="rates-panel">
+        <div class="rate">
+          <label class="rate__label" for="lead-rate" data-i18n="leadResponseRate">Lead Response Rate</label>
+          <input class="rate__slider" type="range" id="lead-rate" name="lead-rate"
+                 min="1" max="100" step="0.5" value="40" />
+          <output class="rate__value" for="lead-rate" data-rate-output="lead-rate">40.00%</output>
+        </div>
+        <div class="rate">
+          <label class="rate__label" for="prospect-rate" data-i18n="prospectResponseRate">Prospect Response Rate</label>
+          <input class="rate__slider" type="range" id="prospect-rate" name="prospect-rate"
+                 min="1" max="100" step="0.5" value="20" />
+          <output class="rate__value" for="prospect-rate" data-rate-output="prospect-rate">20.00%</output>
+        </div>
+      </div>
     </section>
 
   </div>

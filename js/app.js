@@ -19,10 +19,6 @@
   /** Months a campaign covers when no end date has been picked yet. */
   var DEFAULT_CAMPAIGN_MONTHS = 6;
 
-  /** Response rates until the sliders take over. Percentages, 0-100. */
-  var DEFAULT_LEAD_RATE = 40;
-  var DEFAULT_PROSPECT_RATE = 20;
-
   var els = {
     form: document.getElementById('controls'),
     language: document.getElementById('language'),
@@ -32,7 +28,10 @@
     revenue: document.getElementById('revenue'),
     orderValue: document.getElementById('order-value'),
     error: document.getElementById('controls-error'),
-    kpis: document.querySelectorAll('.kpi')
+    kpis: document.querySelectorAll('.kpi'),
+    rates: document.getElementById('rates-panel'),
+    leadRate: document.getElementById('lead-rate'),
+    prospectRate: document.getElementById('prospect-rate')
   };
 
   /**
@@ -118,6 +117,33 @@
   }
 
   /**
+   * Reads both response sliders, refreshes their read-outs and the filled
+   * part of their tracks.
+   * @returns {{leadRate: number, prospectRate: number}} Percentages, 1-100.
+   */
+  function readRates() {
+    return {
+      leadRate: readRate(els.leadRate),
+      prospectRate: readRate(els.prospectRate)
+    };
+  }
+
+  /**
+   * @param {HTMLInputElement} slider
+   * @returns {number} The slider value as a percentage.
+   */
+  function readRate(slider) {
+    var value = Number(slider.value);
+    var percent = ((value - slider.min) / (slider.max - slider.min)) * 100;
+    var output = document.querySelector('[data-rate-output="' + slider.id + '"]');
+
+    slider.style.setProperty('--fill', percent + '%');
+    output.textContent = value.toFixed(2) + '%';
+
+    return value;
+  }
+
+  /**
    * Writes one funnel stage into its KPI card.
    * @param {Element} card
    * @param {number} value People at this stage.
@@ -148,11 +174,13 @@
       return;
     }
 
+    var rates = readRates();
+
     var funnel = FunnelCalculator.calculate({
       revenue: campaign.revenue,
       orderValue: campaign.orderValue,
-      leadRate: DEFAULT_LEAD_RATE,
-      prospectRate: DEFAULT_PROSPECT_RATE
+      leadRate: rates.leadRate,
+      prospectRate: rates.prospectRate
     });
 
     renderKpis(funnel);
@@ -162,6 +190,7 @@
     applyDefaultDates();
     els.form.addEventListener('input', render);
     els.form.addEventListener('change', render);
+    els.rates.addEventListener('input', render);
     els.form.addEventListener('submit', function (event) {
       event.preventDefault();
     });
