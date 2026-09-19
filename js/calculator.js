@@ -82,11 +82,53 @@ window.FunnelCalculator = (function () {
     return (stageValue / prospects) * 100;
   }
 
+  /**
+   * Whole months a campaign spans, rounded up so a trailing part-month still
+   * gets its own bar on the chart.
+   * @param {Date} start
+   * @param {Date} end
+   * @returns {number} At least 1.
+   */
+  function monthsBetween(start, end) {
+    var months = (end.getFullYear() - start.getFullYear()) * 12 +
+      (end.getMonth() - start.getMonth());
+
+    if (end.getDate() > start.getDate()) {
+      months += 1;
+    }
+
+    return Math.max(months, 1);
+  }
+
+  /**
+   * Spreads a funnel evenly over the campaign and reports it as a running
+   * total, so month N holds everything achieved up to and including month N.
+   * @param {{customers: number, leads: number, prospects: number}} funnel
+   * @param {number} months
+   * @returns {Array<{month: number, prospects: number, leads: number, customers: number}>}
+   */
+  function buildSchedule(funnel, months) {
+    var schedule = [];
+
+    for (var month = 1; month <= months; month++) {
+      schedule.push({
+        month: month,
+        prospects: Math.round((funnel.prospects * month) / months),
+        leads: Math.round((funnel.leads * month) / months),
+        customers: Math.round((funnel.customers * month) / months)
+      });
+    }
+
+    return schedule;
+  }
+
   return {
     customersNeeded: customersNeeded,
     leadsNeeded: leadsNeeded,
     prospectsNeeded: prospectsNeeded,
     calculate: calculate,
-    shareOfFunnel: shareOfFunnel
+    shareOfFunnel: shareOfFunnel,
+    monthsBetween: monthsBetween,
+    buildSchedule: buildSchedule
   };
 })();

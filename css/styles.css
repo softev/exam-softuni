@@ -432,3 +432,93 @@ body {
 .rate__slider:focus-visible::-moz-range-thumb {
   box-shadow: 0 0 0 4px rgba(61, 139, 212, 0.35);
 }
+
+/* ==========================================================================
+   Monthly funnel chart
+   ========================================================================== */
+
+.chart {
+  position: relative;
+  margin: 0;
+}
+
+.chart__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.chart__grid {
+  stroke: rgba(255, 255, 255, 0.06);
+  stroke-width: 1;
+}
+
+.chart__tick,
+.chart__row-label,
+.chart__axis-title {
+  fill: var(--muted);
+  font-size: 9.5px;
+  font-family: inherit;
+}
+
+.chart__row-label {
+  font-size: 10px;
+}
+
+.chart__axis-title {
+  font-size: 10px;
+  letter-spacing: 0.3px;
+}
+
+.chart__bar--prospects {
+  fill: var(--stage-prospects);
+}
+
+.chart__bar--leads {
+  fill: var(--stage-leads);
+}
+
+.chart__bar--customers {
+  fill: var(--stage-customers);
+}
+
+.chart__hit {
+  fill: transparent;
+  cursor: crosshair;
+}
+
+.chart__hit:hover {
+  fill: rgba(255, 255, 255, 0.04);
+}
+
+/* Tooltip follows the pointer inside the chart panel. */
+
+.chart__tooltip {
+  position: absolute;
+  z-index: 2;
+  min-width: 118px;
+  padding: 7px 9px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #1b2336;
+  background: #dce4f0;
+  border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+  transform: translate(-50%, -115%);
+}
+
+.chart__tooltip[hidden] {
+  display: none;
+}
+
+.chart__tooltip strong {
+  display: block;
+  margin-bottom: 2px;
+  font-weight: 600;
+}
+
+.chart__tooltip span {
+  display: block;
+  font-variant-numeric: tabular-nums;
+}

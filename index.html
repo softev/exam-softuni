@@ -76,7 +76,12 @@
 
     <section class="workspace">
       <div class="workspace__top">
-        <div class="panel chart-panel" id="chart-panel"></div>
+        <div class="panel chart-panel">
+          <figure class="chart" id="chart">
+            <svg class="chart__svg" id="chart-svg" viewBox="0 0 660 300" aria-label="Campaign funnel by month"></svg>
+            <div class="chart__tooltip" id="chart-tooltip" role="tooltip" hidden></div>
+          </figure>
+        </div>
       <div class="kpi-column" id="kpi-column">
         <article class="kpi" data-kpi="prospects">
           <header class="kpi__head">
@@ -132,6 +137,7 @@
   </div>
 
   <script src="js/calculator.js" defer></script>
+  <script src="js/chart.js" defer></script>
   <script src="js/app.js" defer></script>
 </body>
 </html>
