@@ -26,7 +26,8 @@
     prospectRate: document.getElementById('prospect-rate'),
     chart: document.getElementById('chart'),
     chartSvg: document.getElementById('chart-svg'),
-    tooltip: document.getElementById('chart-tooltip')
+    tooltip: document.getElementById('chart-tooltip'),
+    printReport: document.getElementById('print-report')
   };
 
   /** Latest month-by-month figures, kept so the tooltip can read them back. */
@@ -268,6 +269,11 @@
     });
 
     els.chartSvg.addEventListener('mouseleave', hideTooltip);
+
+    els.printReport.addEventListener('click', function () {
+      hideTooltip();
+      window.print();
+    });
     els.form.addEventListener('submit', function (event) {
       event.preventDefault();
     });
